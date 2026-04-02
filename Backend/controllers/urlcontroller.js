@@ -2,7 +2,7 @@ const express = require('express');
 const async_handler = require('express-async-handler');
 const Url = require('../models/Urlmodel');
 const isValidUrl = require('../utils/validateurl.js');
-
+    const { nanoid } = await import('nanoid');
 // @desc Get url
 // @route GET /shortner/:shortId
 // @access Public
@@ -49,23 +49,27 @@ const makenewurl = async_handler(async (req, res) => {
             return;
 
         }
-    const { nanoid } = await import('nanoid');
-    let shortId;
-    let existing=true;
-    let expireAt;
-    if(expireIn){
-        expireAt=new Date(Date.now()+expireIn*60*60*1000);
-    }
 
-    while(existing){                                                    //i would rather use a try catch as it prevents err 11000 while multiple req at the same time but this is fine for a small project;
-         shortId = nanoid(7);
-         existing=await Url.findOne({shortId});
+    let newurl;
+    let created = false;
+
+    while (!created) {
+    try {
+    const shortId = nanoid(7);
+    newurl = await Url.create({
+      shortId,
+      originalUrl: url
+    });
+    created = true;
+  } catch (err) {
+    if (err.code === 11000) {
+        // Duplicate key error, generate a new shortId and try again
+        continue;
+    } else {
+      throw err;
     }
-    const newurl=await Url.create({
-        originalUrl,
-        shortId,
-        expireAt
-    })
+  }
+}
     
     res.status(201).json({shortUrl: `${process.env.BASE_URL}/shortner/${newurl.shortId}`});
 }

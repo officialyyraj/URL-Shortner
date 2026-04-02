@@ -2,6 +2,7 @@
 const isValidUrl=(urlString)=>{
     try{
         const parsed = new URL(urlString);
+        urlString = urlString.trim();
         return parsed.protocol === 'http:' || parsed.protocol === 'https:';
     }
     catch(err){
