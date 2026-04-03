@@ -8,7 +8,11 @@ const isValidUrl = require('../utils/validateurl.js');
 // @access Public
 const geturl = async_handler(async (req, res) => {
     const { shortId } = req.params;
-    const url=await Url.findOne({shortId});
+    const url=await Url.findOneandUpdate({shortId},
+        {$inc:{clicks:1}},
+        {new:true}
+    ).exec();
+    ValidateUrl(url);
     if(!url){
         res.status(404);
         throw new Error('Url not found');
@@ -17,10 +21,13 @@ const geturl = async_handler(async (req, res) => {
         res.status(410);
         throw new Error('Url has expired');
     }
-    url.clicks++;
-    await url.save();
-    res.redirect(url.originalUrl);
+    res.redirect(301, url.originalUrl);
+    
+    
+
 });
+
+
 // @desc Make new url
 // @route POST /shortner
 // @access Public
@@ -73,7 +80,17 @@ const makenewurl = async_handler(async (req, res) => {
     
     res.status(201).json({shortUrl: `${process.env.BASE_URL}/shortner/${newurl.shortId}`});
 }
-
 );
-
+ValidateUrl=(url)=>{
+    const parsedUrl = new URL(url.originalUrl);
+    if([!'http:','https:'].includes(parsedUrl.protocol)){
+        res.status(400);
+        throw new Error('Invalid URL protocol');
+    }
+    const blockedHosts = ['127.0.0.1', '0.0.0.0', '192.168','10.0','172.16','169.254']; //private IP ranges(add localhost in prod)
+    if(blockedHosts.some(host=>parsedUrl.hostname.includes(host))){
+        res.status(400)
+        throw new Error('URL points to a blocked host');
+    }
+}
 module.exports = { geturl, makenewurl };
