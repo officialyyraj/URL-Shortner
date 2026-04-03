@@ -1,8 +1,9 @@
 //Validation for URL
 const isValidUrl=(urlString)=>{
     try{
-        const parsed = new URL(urlString);
         urlString = urlString.trim();
+        const parsed = new URL(urlString);
+        
         return parsed.protocol === 'http:' || parsed.protocol === 'https:';
     }
     catch(err){
