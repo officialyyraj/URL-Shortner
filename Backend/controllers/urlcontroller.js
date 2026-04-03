@@ -22,8 +22,6 @@ const geturl = async_handler(async (req, res) => {
         throw new Error('Url has expired');
     }
     res.redirect(301, url.originalUrl);
-    
-    
 
 });
 
