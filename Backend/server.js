@@ -10,9 +10,25 @@ connectDB()
 const app = express()
 app.use(express.json()) // middleware to parse json body of request
 app.use(express.urlencoded({extended: false})) // middleware to parse urlencoded body of request
+// Enable CORS in development only
+const cors = require('cors')
+const FRONTEND_ORIGIN = process.env.FRONTEND_URL || 'http://localhost:5173'
+if(process.env.NODE_ENV !== 'production'){
+    app.use(cors({ origin: FRONTEND_ORIGIN }))
+}
 app.use('/shortner', urlRoutes)
 app.use('/users',userRoutes)
 app.use(errorHandler)  // Add error handling middleware
+
+// Serve frontend build in production
+if(process.env.NODE_ENV === 'production'){
+    const path = require('path')
+    const clientDist = path.join(__dirname, '..', 'Frontend', 'dist')
+    app.use(express.static(clientDist))
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(clientDist, 'index.html'))
+    })
+}
 
 app.listen(PORT,()=>{
     console.log(`Server is running on port ${PORT}`)

@@ -55,6 +55,7 @@ const makenewurl = async_handler(async (req, res) => {
             const newurl=await Url.create({
                 originalUrl: cleanedurl,
                 shortId:normalizedid,
+                user: req.user ? req.user._id : undefined,
                 expireAt:expireIn?new Date(Date.now()+expireIn*60*60*1000):undefined
             })
             res.status(201).json({shortUrl: `${process.env.BASE_URL}/shortner/${newurl.shortId}`});
@@ -65,12 +66,13 @@ const makenewurl = async_handler(async (req, res) => {
     let newurl;
     let created = false;
 
-    while (!created) {
+        while (!created) {
     try {
     const shortId = nanoid(7);
     newurl = await Url.create({
       shortId,
       originalUrl: cleanedurl,
+            user: req.user ? req.user._id : undefined,
       expireAt: expireIn ? new Date(Date.now() + expireIn * 60 * 60 * 1000) : undefined,
     });
     created = true;

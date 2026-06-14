@@ -3,6 +3,6 @@ const { geturl, makenewurl } = require('../controllers/urlcontroller');
 const {protect}=require('../middleware/authMiddleware')
 const router = express.Router();
 
-router.post('/',makenewurl);
+router.post('/', protect, makenewurl);
 router.get('/:shortId', geturl);
 module.exports = router;
