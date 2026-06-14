@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 
-const BASE = import.meta.env.VITE_BASE_URL || 'http://localhost:5000'
+const BASE = import.meta.env.VITE_BASE_URL
 
 export default function Login({ onLogin }){
   const [email,setEmail]=useState('')

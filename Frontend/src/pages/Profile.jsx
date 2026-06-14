@@ -23,7 +23,7 @@ export default function Profile(){
   if(loading) return <div className="card">Loading...</div>
   if(error) return <div className="card message error">{error}</div>
 
-  const baseUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:5000'
+  const baseUrl = import.meta.env.VITE_BASE_URL
 
   return (
     <div>

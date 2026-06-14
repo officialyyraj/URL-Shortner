@@ -30,7 +30,7 @@ const geturl = async_handler(async (req, res) => {
 
 // @desc Make new url
 // @route POST /shortner
-// @access Public
+// @access Private
 const makenewurl = async_handler(async (req, res) => {
     const { originalUrl, customId, expireIn }=req.body;
         const cleanedurl = originalUrl.trim();

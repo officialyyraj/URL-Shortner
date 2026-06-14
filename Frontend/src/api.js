@@ -1,4 +1,4 @@
-const BASE = import.meta.env.VITE_BASE_URL || 'http://localhost:5000'
+const BASE = import.meta.env.VITE_BASE_URL
 
 async function apiFetch(path, options = {}){
   const token = localStorage.getItem('token')
